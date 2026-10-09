@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#090d19" />
+  <title>LÚMINA — Jhon & Ángela</title>
+  <style>
+    :root{
+      --bg:#090d19;
+      --panel:rgba(17,23,43,.86);
+      --panel-soft:rgba(255,255,255,.06);
+      --text:#f7f8ff;
+      --muted:#aab2ca;
+      --pink:#ff7faa;
+      --violet:#8d7dff;
+      --cyan:#79e2ef;
+      --green:#6be0ac;
+      --warning:#ffd27a;
+      --border:rgba(255,255,255,.12);
+      --shadow:0 28px 90px rgba(0,0,0,.4);
+    }
+    *{box-sizing:border-box}
+    html{color-scheme:dark}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(circle at 17% 10%,rgba(141,125,255,.23),transparent 28%),
+        radial-gradient(circle at 84% 16%,rgba(255,127,170,.18),transparent 25%),
+        radial-gradient(circle at 50% 92%,rgba(121,226,239,.08),transparent 26%),
+        linear-gradient(155deg,#070a13,#10162a 58%,#1a1022);
+      overflow-x:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.08;
+      background-image:radial-gradient(circle,#fff 1px,transparent 1.15px);
+      background-size:72px 72px;
+    }
+    button,input{font:inherit}
+    button{-webkit-tap-highlight-color:transparent}
+    .app{width:min(930px,94%);margin:24px auto;position:relative;z-index:1;padding-bottom:20px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:15px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .orb{
+      width:44px;height:44px;border-radius:50%;position:relative;
+      background:conic-gradient(var(--pink),var(--violet),var(--cyan),var(--pink));
+      box-shadow:0 0 36px rgba(255,127,170,.34);
+      animation:pulse 2.8s ease-in-out infinite;
+    }
+    .orb::after{content:"";position:absolute;inset:6px;border-radius:50%;background:#11172b}
+    @keyframes pulse{50%{transform:scale(1.06);filter:brightness(1.12)}}
+    .brand strong{letter-spacing:.08em}
+    .small{font-size:.82rem;color:var(--muted)}
+    .badge{font-size:.78rem;border:1px solid var(--border);background:rgba(255,255,255,.05);border-radius:999px;padding:7px 11px;color:#e1e5ff}
+    .shell{border:1px solid var(--border);background:var(--panel);backdrop-filter:blur(18px);border-radius:28px;overflow:hidden;box-shadow:var(--shadow)}
+    .status{padding:16px 20px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px}
+    .progressWrap{height:8px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;margin-top:8px}
+    .progress{height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--pink));transition:width .4s ease}
+    .chat{height:min(64vh,630px);overflow:auto;padding:22px;scroll-behavior:smooth}
+    .msg{max-width:82%;padding:14px 16px;border-radius:18px;margin:10px 0;line-height:1.56;white-space:pre-line;animation:up .25s ease both}
+    @keyframes up{from{opacity:0;transform:translateY(7px)}}
+    .ai{background:rgba(255,255,255,.065);border:1px solid var(--border);border-top-left-radius:6px}
+    .user{margin-left:auto;background:linear-gradient(135deg,rgba(141,125,255,.3),rgba(255,127,170,.22));border:1px solid rgba(255,255,255,.13);border-top-right-radius:6px}
+    .system{max-width:100%;text-align:center;background:transparent;color:var(--muted);font-size:.9rem;padding:7px}
+    .destination{max-width:100%;border:1px solid rgba(255,255,255,.14);background:linear-gradient(135deg,rgba(121,226,239,.08),rgba(255,127,170,.08));border-radius:22px;padding:19px;margin:14px 0;animation:up .25s ease both}
+    .destination h3{margin:0 0 8px;font-size:1.4rem}
+    .destination p{margin:0;color:#d7dcf0;line-height:1.55}
+    .composer{border-top:1px solid var(--border);padding:16px;background:rgba(5,8,17,.3);display:grid;gap:10px}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    input{flex:1;min-width:180px;color:var(--text);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:14px;padding:13px 14px;outline:none}
+    input:focus{border-color:rgba(255,127,170,.56);box-shadow:0 0 0 3px rgba(255,127,170,.08)}
+    button{border:none;border-radius:14px;padding:12px 16px;cursor:pointer;color:white;background:linear-gradient(135deg,var(--violet),var(--pink));font-weight:750;box-shadow:0 9px 26px rgba(141,125,255,.18)}
+    button.secondary{background:rgba(255,255,255,.07);border:1px solid var(--border);box-shadow:none}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    .helper{min-height:19px;color:var(--muted);font-size:.82rem}
+    .hidden{display:none!important}
+    .countdownPage,.finale{display:none;padding:28px;text-align:center}
+    .countdownPage.show,.finale.show{display:block}
+    .bigCard{max-width:680px;margin:0 auto;border:1px solid rgba(255,255,255,.14);background:linear-gradient(145deg,rgba(255,127,170,.1),rgba(141,125,255,.1));border-radius:27px;padding:30px 22px}
+    .bigCard h1{font-size:clamp(2rem,5vw,3.25rem);margin:5px 0 12px}
+    .bigCard p{color:#dce0f3;line-height:1.72}
+    .timer{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:24px auto;max-width:560px}
+    .timeBox{padding:16px 8px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid var(--border)}
+    .timeBox strong{font-size:clamp(1.55rem,5vw,2.65rem);display:block;font-variant-numeric:tabular-nums}
+    .timeBox span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .lock{font-size:48px;margin:4px 0}
+    .heart{font-size:52px;display:inline-block;animation:beat 1.1s infinite}
+    @keyframes beat{50%{transform:scale(1.18)}}
+    .finalQuestion{font-size:clamp(1.6rem,5vw,2.35rem);font-weight:850;line-height:1.25;color:#fff;margin:20px auto 24px;max-width:560px}
+    .celebrate{position:fixed;top:-35px;font-size:24px;pointer-events:none;z-index:20;animation:fall 3s linear forwards}
+    @keyframes fall{to{transform:translateY(112vh) rotate(720deg);opacity:.9}}
+    .footer{padding:12px 18px;text-align:center;color:rgba(255,255,255,.38);font-size:.72rem}
+    @media(max-width:640px){
+      .app{margin:12px auto;width:min(96%,930px)}
+      .msg{max-width:94%}
+      .status{grid-template-columns:1fr}
+      .chat{height:58vh;padding:16px}
+      .timer{grid-template-columns:repeat(2,1fr)}
+      .countdownPage,.finale{padding:20px 14px}
+      .bigCard{padding:26px 16px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="orb" aria-hidden="true"></div>
+        <div><strong>LÚMINA AI</strong><div class="small">protocolo J + A</div></div>
+      </div>
+      <div class="badge">Experiencia para dos ✨</div>
+    </div>
+
+    <section class="shell" aria-live="polite">
+      <div class="status">
+        <div>
+          <div id="statusText">Inicializando…</div>
+          <div class="progressWrap"><div class="progress" id="progress"></div></div>
+        </div>
+        <div class="badge" id="stepBadge">Paso 0</div>
+      </div>
+
+      <main class="chat" id="chat"></main>
+
+      <div class="composer" id="composer">
+        <div class="row" id="inputs"></div>
+        <div class="row">
+          <button id="sendBtn" type="button">Continuar</button>
+          <button id="hintBtn" type="button" class="secondary hidden">Pista</button>
+        </div>
+        <div class="helper" id="helper"></div>
+      </div>
+
+      <section class="countdownPage" id="countdownPage">
+        <div class="bigCard">
+          <div class="lock">🔐</div>
+          <div class="small">CONTENIDO BLOQUEADO</div>
+          <h1>Aún no es el momento.</h1>
+          <p>Este contenido permanecerá bloqueado hasta las <strong>10:00 p. m.</strong></p>
+          <div class="timer" aria-label="Cuenta regresiva">
+            <div class="timeBox"><strong id="days">00</strong><span>días</span></div>
+            <div class="timeBox"><strong id="hours">00</strong><span>horas</span></div>
+            <div class="timeBox"><strong id="minutes">00</strong><span>minutos</span></div>
+            <div class="timeBox"><strong id="seconds">00</strong><span>segundos</span></div>
+          </div>
+          <div class="small">Hora de referencia: Colombia</div>
+        </div>
+      </section>
+
+      <section class="finale" id="finale">
+        <div class="bigCard">
+          <div class="heart">💖</div>
+          <div class="small">PROTOCOLO DESBLOQUEADO</div>
+          <div class="finalQuestion">Ángela, ¿quieres ser mi novia? 💖</div>
+          <div class="row" style="justify-content:center">
+            <button id="yesBtn" type="button">Sí, quiero 💕</button>
+            <button id="talkBtn" type="button" class="secondary">Quiero hablarlo contigo 😊</button>
+          </div>
+          <p id="finalResponse" style="font-weight:800"></p>
+        </div>
+      </section>
+
+      <div class="footer">LÚMINA AI · Jhon + Ángela</div>
+    </section>
+  </div>
+
+  <script>
+  (() => {
+    "use strict";
+
+    const CONFIG = {
+      names: { jhon: "Jhon", angela: "Ángela" },
+
+      // LLAVE PRIVADA DE JHON. Cámbiala aquí si quieres.
+      jhonSecretKey: "luna",
+
+      // Si quieres fijar la cita a una fecha específica, usa AAAA-MM-DD.
+      // Ejemplo: "2026-10-17". Si queda vacío, toma el día actual en Colombia.
+      eventDate: "",
+
+      unlockHour: 22,
+      unlockMinute: 0,
+
+      intro: [
+        "Ángela… tengo una pequeña confesión que hacerte. 😏",
+        "Te mentí: hoy no vamos al gym.",
+        "Pero tranquila… no te cambies. Quédate tal como estás. 💖",
+        "Jhon ya va por ti.",
+        "Tiempo estimado de llegada: una hora. ⏳",
+        "Hasta entonces, esta IA tiene órdenes muy claras: no revelar absolutamente nada más.",
+        "Cuando Jhon llegue, él tendrá la llave para continuar. ✨"
+      ],
+
+      steps: [
+        {
+          type: "secretGate",
+          title: "Acceso bloqueado",
+          prompt: "La siguiente parte de la sorpresa está bloqueada. Espera a Jhon y, cuando llegue, pídele la llave para continuar.",
+          placeholder: "Llave privada de Jhon",
+          success: "Llave aceptada. Jhon ha llegado. Ahora sí… comienza la aventura. 💕"
+        },
+        {
+          type: "confirm",
+          title: "Identificación",
+          prompt: "Verificación de participantes: ¿son Jhon y Ángela?",
+          button: "Sí. Somos nosotros."
+        },
+        {
+          type: "riddle",
+          title: "Recuerdo 01",
+          prompt: "Primera comprobación: ¿en qué lugar Jhon invitó a Ángela a salir?",
+          answers: ["gym","gimnasio","el gym","en el gym","en el gimnasio"],
+          hint: "Es un lugar al que normalmente se va a entrenar.",
+          success: "Correcto. Registro encontrado: todo empezó con una invitación en el gym. ✨"
+        },
+        {
+          type: "text",
+          title: "Sincronización",
+          prompt: "Antes de seguir, cada uno diga una cosa que admire del otro. Escríbanlas juntas.",
+          placeholder: "Jhon admira… / Ángela admira…",
+          success: "Respuesta guardada. Compatibilidad de ternura: sospechosamente alta."
+        },
+        {
+          type: "riddle",
+          title: "Acertijo de conexión",
+          prompt: "Tenemos bigotes, cuatro patas, carácter propio y, de alguna manera, somos una de las cosas que más los une. ¿Qué somos?",
+          answers: ["gatos","los gatos","gato","gatitos","los gatitos"],
+          hint: "Miau.",
+          success: "Exacto: los gatos. Esa respuesta es la primera pieza del próximo destino."
+        },
+        {
+          type: "riddle",
+          title: "Acertijo romántico 01",
+          prompt: "No soy una cita cualquiera: tengo café, ronroneos y dos personas escribiendo una historia. ¿Qué clase de lugar podría combinar esas tres cosas?",
+          answers: ["cafe de gatos","cafeteria de gatos","cafe con gatos","cafeteria con gatos"],
+          hint: "Piensa en un lugar para tomar algo mientras hay felinos cerca.",
+          success: "Muy bien. Ya saben qué tipo de lugar buscan… pero su nombre sigue bloqueado."
+        },
+        {
+          type: "secretDestination",
+          title: "Destino bloqueado",
+          prompt: "Jhon: introduce tu llave privada para revelar el primer destino.",
+          destination: "Gatollate",
+          text: "Primer destino desbloqueado: Gatollate. Café, gatos y ustedes dos. Vayan allí y continúen únicamente cuando ya estén en el lugar.",
+          button: "Ya llegamos ☕🐈"
+        },
+        {
+          type: "riddle",
+          title: "Primer paso completo",
+          prompt: "Primer paso completo. Ahora deben dirigirse al lugar donde comparten más tiempo juntos. ¿Qué lugar es?",
+          answers: ["apartamento","el apartamento","apartamento de angela","apartamento de ángela","tu apartamento","casa","la casa"],
+          hint: "Es un lugar más privado y cotidiano que una cafetería.",
+          success: "Ruta reconocida. Próximo destino: el apartamento."
+        },
+        {
+          type: "destination",
+          title: "Destino intermedio",
+          destination: "El apartamento",
+          text: "Vayan al apartamento. Cuando estén allí, no se acomoden demasiado: la siguiente pista tiene prisa.",
+          button: "Ya estamos en el apartamento 🏠"
+        },
+        {
+          type: "riddle",
+          title: "Acertijo de velocidad",
+          prompt: "Tengo seis letras. Si quieren que la historia siga sin perder tiempo, así deben dejar todo aquí: R _ P I D O. ¿Cuál es la palabra?",
+          answers: ["rapido","rápido"],
+          hint: "Es lo contrario de lento.",
+          success: "Correcto: RÁPIDO. Dejen todo rápido. La noche todavía tiene otro destino."
+        },
+        {
+          type: "riddle",
+          title: "Acertijo romántico 02",
+          prompt: "Una historia de amor merece un lugar con pasta, una mesa para dos y un nombre que suena a película romántica. ¿Qué tipo de lugar podría ser?",
+          answers: ["restaurante italiano","italiano","restaurante","un restaurante italiano","comida italiana"],
+          hint: "Italia tiene algo que ver. 🍝",
+          success: "Respuesta aceptada. Ya saben el estilo del lugar… pero el nombre permanece protegido."
+        },
+        {
+          type: "secretDestination",
+          title: "Destino final bloqueado",
+          prompt: "Jhon: solo tu llave puede revelar dónde continúa la noche.",
+          destination: "Piazza Historia d'Amore",
+          text: "Destino desbloqueado: Piazza Historia d'Amore. Vayan allí. Cuando estén sentados y listos, confirmen la llegada.",
+          button: "Ya llegamos 🍝✨"
+        },
+        {
+          type: "riddle",
+          title: "Acertijo del momento",
+          prompt: "Cuando algo importante está por comenzar, no sirve correr. Hay que saber esperar. Completen la frase: «Todo llega a su ___». ",
+          answers: ["momento","su momento","tiempo","su tiempo"],
+          hint: "No depende del lugar. Depende de esperar.",
+          success: "Correcto. Han llegado al último bloqueo."
+        },
+        {
+          type: "secretFinal",
+          title: "Llave final de Jhon",
+          prompt: "Última prueba: existe una palabra que solo Jhon conoce. No se deduce, no se busca y no tiene pista. Jhon, escribe tu llave privada para activar el bloqueo final.",
+          placeholder: "Llave privada",
+          success: "Llave aceptada."
+        }
+      ]
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const chat = $("chat");
+    const composer = $("composer");
+    const inputs = $("inputs");
+    const sendBtn = $("sendBtn");
+    const hintBtn = $("hintBtn");
+    const helper = $("helper");
+    const progress = $("progress");
+    const statusText = $("statusText");
+    const stepBadge = $("stepBadge");
+    const countdownPage = $("countdownPage");
+    const finale = $("finale");
+    const finalResponse = $("finalResponse");
+
+    const STORAGE_KEY = "lumina_jhon_angela_step_v2";
+    let stepIndex = 0;
+    let timerInterval = null;
+
+    function sleep(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
+
+    function normalize(value){
+      return String(value ?? "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .replace(/[¿?¡!.,;:]/g, "")
+        .replace(/\s+/g, " ");
+    }
+
+    function addMsg(text, who = "ai"){
+      const div = document.createElement("div");
+      div.className = `msg ${who}`;
+      div.textContent = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function destinationCard(name, text){
+      const box = document.createElement("div");
+      box.className = "destination";
+      const label = document.createElement("div");
+      label.className = "small";
+      label.textContent = "DESTINO DESBLOQUEADO";
+      const title = document.createElement("h3");
+      title.textContent = name;
+      const body = document.createElement("p");
+      body.textContent = text;
+      box.append(label, title, body);
+      chat.appendChild(box);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function setProgress(){
+      const total = CONFIG.steps.length;
+      const current = Math.max(0, Math.min(total, stepIndex + 1));
+      progress.style.width = `${Math.round((Math.min(stepIndex, total) / total) * 100)}%`;
+      stepBadge.textContent = stepIndex >= total ? "Final 🔐" : `Paso ${current}/${total}`;
+    }
+
+    function saveProgress(){
+      try{ localStorage.setItem(STORAGE_KEY, String(stepIndex)); }catch(_){ }
+    }
+
+    function loadProgress(){
+      try{
+        const saved = Number(localStorage.getItem(STORAGE_KEY));
+        if(Number.isInteger(saved) && saved >= 0 && saved <= CONFIG.steps.length){
+          stepIndex = saved;
+        }
+      }catch(_){ }
+    }
+
+    function clearControls(){
+      inputs.innerHTML = "";
+      helper.textContent = "";
+      hintBtn.classList.add("hidden");
+      hintBtn.onclick = null;
+      sendBtn.onclick = null;
+      sendBtn.style.display = "inline-block";
+      sendBtn.disabled = false;
+    }
+
+    function completeStep(delay = 450){
+      stepIndex += 1;
+      saveProgress();
+      setTimeout(renderStep, delay);
+    }
+
+    function makeInput({type="text", placeholder="Escribe tu respuesta…"} = {}){
+      const input = document.createElement("input");
+      input.type = type;
+      input.placeholder = placeholder;
+      input.autocomplete = "off";
+      input.autocapitalize = "sentences";
+      input.spellcheck = false;
+      input.addEventListener("keydown", (event) => {
+        if(event.key === "Enter" && !sendBtn.disabled) sendBtn.click();
+      });
+      inputs.appendChild(input);
+      setTimeout(() => input.focus({preventScroll:true}), 50);
+      return input;
+    }
+
+    function renderStep(){
+      clearControls();
+      setProgress();
+
+      if(stepIndex >= CONFIG.steps.length){
+        openFinalLock();
+        return;
+      }
+
+      const step = CONFIG.steps[stepIndex];
+      statusText.textContent = step.title;
+      addMsg(step.prompt, "ai");
+
+      if(step.type === "secretGate"){
+        const input = makeInput({type:"password", placeholder:step.placeholder || "Llave privada de Jhon"});
+        sendBtn.textContent = "Continuar";
+        sendBtn.onclick = () => {
+          const value = input.value.trim();
+          if(!value){ helper.textContent = "La aventura seguirá bloqueada hasta que Jhon introduzca su llave."; return; }
+          addMsg("••••••", "user");
+          if(normalize(value) !== normalize(CONFIG.jhonSecretKey)){
+            addMsg("Esa no es la llave. LÚMINA seguirá guardando el secreto. 🤫", "ai");
+            input.value = "";
+            input.focus();
+            return;
+          }
+          addMsg(step.success, "ai");
+          completeStep();
+        };
+        return;
+      }
+
+      if(step.type === "confirm"){
+        sendBtn.textContent = step.button;
+        sendBtn.onclick = () => {
+          addMsg(step.button, "user");
+          addMsg("Identidades verificadas. Iniciando recorrido.", "ai");
+          completeStep();
+        };
+        return;
+      }
+
+      if(step.type === "destination"){
+        destinationCard(step.destination, step.text);
+        sendBtn.textContent = step.button;
+        sendBtn.onclick = () => {
+          addMsg(step.button, "user");
+          completeStep();
+        };
+        return;
+      }
+
+      if(step.type === "secretDestination"){
+        const input = makeInput({type:"password", placeholder:"Llave privada de Jhon"});
+        sendBtn.textContent = "Revelar destino";
+        sendBtn.onclick = () => {
+          const value = input.value.trim();
+          if(!value){ helper.textContent = "Jhon debe introducir su llave."; return; }
+          addMsg("••••••", "user");
+          if(normalize(value) !== normalize(CONFIG.jhonSecretKey)){
+            addMsg("Llave incorrecta. El destino seguirá oculto.", "ai");
+            input.value = "";
+            input.focus();
+            return;
+          }
+          addMsg("Llave aceptada. Destino desbloqueado.", "ai");
+          destinationCard(step.destination, step.text);
+          inputs.innerHTML = "";
+          helper.textContent = "";
+          sendBtn.textContent = step.button;
+          sendBtn.onclick = () => {
+            addMsg(step.button, "user");
+            completeStep();
+          };
+        };
+        return;
+      }
+
+      if(step.type === "secretFinal"){
+        const input = makeInput({type:"password", placeholder:step.placeholder});
+        sendBtn.textContent = "Activar bloqueo final";
+        sendBtn.onclick = () => {
+          const value = input.value.trim();
+          if(!value){ helper.textContent = "Jhon debe introducir su llave."; return; }
+          addMsg("••••••", "user");
+          if(normalize(value) !== normalize(CONFIG.jhonSecretKey)){
+            addMsg("Llave incorrecta. El último bloque sigue cerrado.", "ai");
+            input.value = "";
+            input.focus();
+            return;
+          }
+          addMsg(step.success, "ai");
+          completeStep();
+        };
+        return;
+      }
+
+      if(step.type === "text" || step.type === "riddle"){
+        const input = makeInput({placeholder:step.placeholder || "Escriban su respuesta…"});
+        sendBtn.textContent = "Enviar";
+
+        if(step.type === "riddle"){
+          hintBtn.classList.remove("hidden");
+          hintBtn.onclick = () => { helper.textContent = `Pista: ${step.hint}`; };
+        }
+
+        sendBtn.onclick = () => {
+          const value = input.value.trim();
+          if(!value){ helper.textContent = "Escriban una respuesta para continuar."; return; }
+          addMsg(value, "user");
+
+          if(step.type === "text"){
+            addMsg(step.success, "ai");
+            completeStep();
+            return;
+          }
+
+          const ok = step.answers.some(answer => normalize(answer) === normalize(value));
+          if(ok){
+            addMsg(step.success, "ai");
+            completeStep();
+          }else{
+            addMsg("Esa respuesta todavía no abre la siguiente puerta. Intenten otra vez.", "ai");
+            input.value = "";
+            input.focus();
+          }
+        };
+      }
+    }
+
+    function bogotaDateParts(date = new Date()){
+      const formatter = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Bogota",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      });
+      const parts = formatter.formatToParts(date);
+      const out = {};
+      for(const part of parts){
+        if(part.type !== "literal") out[part.type] = Number(part.value);
+      }
+      return {year:out.year, month:out.month, day:out.day};
+    }
+
+    function getUnlockTarget(){
+      let year, month, day;
+      if(/^\d{4}-\d{2}-\d{2}$/.test(CONFIG.eventDate)){
+        [year, month, day] = CONFIG.eventDate.split("-").map(Number);
+      }else{
+        const today = bogotaDateParts();
+        ({year, month, day} = today);
+      }
+
+      // Bogotá = UTC-5 todo el año. 22:00 Bogotá equivale a 03:00 UTC del día siguiente.
+      const utcHour = CONFIG.unlockHour + 5;
+      return new Date(Date.UTC(year, month - 1, day, utcHour, CONFIG.unlockMinute, 0, 0));
+    }
+
+    function openFinalLock(){
+      clearInterval(timerInterval);
+      chat.style.display = "none";
+      composer.style.display = "none";
+      countdownPage.classList.remove("show");
+      finale.classList.remove("show");
+      progress.style.width = "100%";
+      stepBadge.textContent = "Final 🔐";
+
+      const target = getUnlockTarget();
+      if(Date.now() >= target.getTime()){
+        revealFinale();
+        return;
+      }
+
+      statusText.textContent = "Esperando la hora correcta";
+      countdownPage.classList.add("show");
+
+      const tick = () => {
+        const diff = target.getTime() - Date.now();
+        if(diff <= 0){
+          clearInterval(timerInterval);
+          revealFinale();
+          return;
+        }
+        const totalSeconds = Math.floor(diff / 1000);
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        $("days").textContent = String(days).padStart(2,"0");
+        $("hours").textContent = String(hours).padStart(2,"0");
+        $("minutes").textContent = String(minutes).padStart(2,"0");
+        $("seconds").textContent = String(seconds).padStart(2,"0");
+      };
+
+      tick();
+      timerInterval = window.setInterval(tick, 1000);
+    }
+
+    function revealFinale(){
+      clearInterval(timerInterval);
+      countdownPage.classList.remove("show");
+      finale.classList.add("show");
+      statusText.textContent = "22:00 — Protocolo desbloqueado";
+      stepBadge.textContent = "💖";
+      finalResponse.textContent = "";
+      celebrate();
+    }
+
+    function celebrate(){
+      const icons = ["💖","✨","💕","🌷","💫","🐈"];
+      for(let i = 0; i < 54; i++){
+        const el = document.createElement("span");
+        el.className = "celebrate";
+        el.textContent = icons[Math.floor(Math.random() * icons.length)];
+        el.style.left = `${Math.random() * 100}vw`;
+        el.style.animationDelay = `${Math.random() * 1.2}s`;
+        el.style.fontSize = `${17 + Math.random() * 24}px`;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 4500);
+      }
+    }
+
+    $("yesBtn").addEventListener("click", () => {
+      finalResponse.textContent = "💞 Respuesta registrada. Nuevo estado: Jhon + Ángela. Que empiece el siguiente capítulo.";
+      celebrate();
+    });
+
+    $("talkBtn").addEventListener("click", () => {
+      finalResponse.textContent = "La respuesta puede tomarse con calma. Lo importante es que sea sincera y de los dos.";
+    });
+
+    async function start(){
+      loadProgress();
+
+      if(stepIndex > 0){
+        addMsg("LÚMINA AI // sesión restaurada", "system");
+        renderStep();
+        return;
+      }
+
+      statusText.textContent = "Conectando…";
+      addMsg("LÚMINA AI // conexión establecida", "system");
+      for(const line of CONFIG.intro){
+        await sleep(420);
+        addMsg(line, "ai");
+      }
+      await sleep(350);
+      renderStep();
+    }
+
+    start().catch(() => {
+      statusText.textContent = "LÚMINA";
+      addMsg("Ocurrió un problema al iniciar. Recarga la página para intentarlo de nuevo.", "ai");
+    });
+  })();
+  </script>
+</body>
+</html>
